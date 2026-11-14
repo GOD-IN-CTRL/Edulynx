@@ -85,7 +85,7 @@ function view(){
   if(step==="pending")return hero("Awaiting approval","")+`<div class="pg"><div class="card">Your ${e(role)} account at <b>${e(school.name)}</b> must be approved by the school before you can see staff information.</div><button class="g w" onclick="approveDemo()">Demo: simulate school approval</button><button class="g w" style="margin-top:8px" onclick="out()">Back</button></div>`;
   return hero(mode==="in"?"Sign in":"Create account",e(school.name),`<button class="back" onclick="step='school';R();go()">← Change school</button>`)+`<div class="pg">
   <div class="row"><button class="${mode==="in"?"":"g"}" style="flex:1" onclick="mode='in';R();go()">Sign in</button><button class="${mode==="up"?"":"g"}" style="flex:1" onclick="mode='up';R();go()">Create account</button></div>
-  ${mode==="up"?`<input id="nm" placeholder="Full name" style="margin-top:14px"><h3 style="margin-top:12px">Choose your role</h3><div class="chips">${["parent","student","teacher","principal"].map(r=>`<button class="${role===r?"on":""}" onclick="role='${r}';keep();go()">${{parent:"Parent",student:"Student",teacher:"Teacher",principal:"Principal"}[r]}</button>`).join("")}</div>${ST({role})?'<p class="mut">Staff accounts need school approval.</p>':'<p class="mut">The school will link your account to the learner’s record.</p>'}`:""}
+  ${mode==="up"?`<input id="nm" placeholder="Full name" style="margin-top:14px"><h3 style="margin-top:12px">Choose your role</h3><div class="chips">${["parent","student","teacher","principal"].map(r=>`<button class="${role===r?"on":""}" onclick="setRole('${r}')">${{parent:"Parent",student:"Student",teacher:"Teacher",principal:"Principal"}[r]}</button>`).join("")}</div>${ST({role})?'<p class="mut">Staff accounts need school approval.</p>':'<p class="mut">The school will link your account to the learner’s record.</p>'}`:""}
   <input id="em" type="email" placeholder="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password">
   <div class="err">${e(err)}</div><button class="w" style="margin-top:6px" onclick="auth()">${mode==="in"?"Sign in":"Create account"}</button>
   <div class="demo">Demo logins (password <b>demo</b>):<br>p@demo.com principal · t@demo.com teacher<br>parent@demo.com · s@demo.com</div></div>`}
@@ -94,6 +94,7 @@ function view(){
  const body={home:home,msg:msgs,meet:meets,rec:recs,sos:sos,mng:mng}[tab]();
  return `<header class="bar"><div><div class="sch">${e(school.name)}</div><div class="who">${e(me.name)} <span class="tag">${me.role}</span></div></div><button class="o" onclick="out()">Sign out</button></header><main class="pg">${body}</main><nav><div>${T.map(t=>`<button class="${tab===t[0]?"on":""}" onclick="tab='${t[0]}';peer=null;R();go()">${t[1]}</button>`).join("")}</div></nav>`}
 let keepv={};function keep(){keepv={nm:$("nm")?.value,em:$("em")?.value}}
+function setRole(r){keep();role=r;go();if(keepv.nm&&$("nm"))$("nm").value=keepv.nm;if(keepv.em&&$("em"))$("em").value=keepv.em}
 function pick(id){school=S.schools.find(s=>s.id===id);step="auth";R();go()}
 function auth(){const em=$("em").value.trim().toLowerCase(),pw=$("pw").value;R();
  if(!em||!pw){err="Enter your email and password.";return go()}
