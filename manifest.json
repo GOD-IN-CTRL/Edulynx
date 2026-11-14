@@ -1,4 +1,8 @@
 {
+  "icons": [
+  { "src": "edulynx.png", "sizes": "192x192", "type": "image/png" },
+  { "src": "edulynx.png", "sizes": "512x512", "type": "image/png" }
+],
   "background_color": "#ffffff",
   "dir": "ltr",
   "display": "standalone",
