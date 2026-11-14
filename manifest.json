@@ -10,6 +10,6 @@
   "orientation": "any",
   "scope": "/",
   "short_name": "Edulynx",
-  "start_url": "/",
+  "start_url": "-SchoolBridge-index.html",
   "theme_color": "#ffffff"
 }
