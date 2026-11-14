@@ -102,6 +102,7 @@ function auth(){const em=$("em").value.trim().toLowerCase(),pw=$("pw").value;R()
   if(!u.ok){role=u.role;me=null;pend=u;step="pending";return go()}me=u;tab="home";return go()}
  const nm=$("nm").value.trim();if(!nm){err="Enter your full name.";return go()}
  if(S.users.some(u=>u.school===school.id&&u.email===em)){err="That email is already registered.";return go()}
+ if(role==="principal"&&S.users.some(u=>u.school===school.id&&u.role==="principal")){err="This school already has a principal. Ask the school owner for help.";return go()}
  if(pw.length<4){err="Use a longer password.";return go()}
  const u={id:S.n++,school:school.id,name:nm,email:em,pw,role,ok:!ST({role})};S.users.push(u);save();
  if(u.ok){me=u;tab="home"}else{pend=u;step="pending"}go()}
