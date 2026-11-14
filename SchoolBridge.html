@@ -123,5 +123,13 @@ function appr(id){S.users.find(u=>u.id===id).ok=true;save();go()}
 function post(){const t=$("ht").value.trim(),b=$("hb").value.trim();if(!t||!b)return;S.ann.push({school:school.id,title:t,body:b,by:me.name,t:Date.now()});save();tab="home";go()}
 go();
 </script>
+));
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
+});
 </body>
 </html>
