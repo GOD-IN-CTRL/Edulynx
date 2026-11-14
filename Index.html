@@ -51,7 +51,7 @@ function view(){
  if(adm)return admin();
  if(!me){
   if(step==="school"){const l=S.schools.filter(s=>s.name.toLowerCase().includes(q.toLowerCase()));
-   return `<h1>🌉 SchoolBridge</h1><p class="mut">One secure bridge between your school and its community.</p><h2>1. Choose your school</h2><input id="sq" placeholder="Search for your school" value="${e(q)}" oninput="q=this.value;go();$('sq').focus();$('sq').setSelectionRange(q.length,q.length)">${l.map(s=>`<button class="li" onclick="pick(${s.id})">🏫 ${e(s.name)}</button>`).join("")||'<p class="mut">No registered school found.</p>'}<button class="g w" style="margin-top:24px" onclick="step='owner';R();go()">🛠️ Owner console</button>`}
+   return `<h1>🌉 Edulynx</h1><p class="mut">One secure bridge between your school and its community.</p><h2>1. Choose your school</h2><input id="sq" placeholder="Search for your school" value="${e(q)}" oninput="q=this.value;go();$('sq').focus();$('sq').setSelectionRange(q.length,q.length)">${l.map(s=>`<button class="li" onclick="pick(${s.id})">🏫 ${e(s.name)}</button>`).join("")||'<p class="mut">No registered school found.</p>'}<button class="g w" style="margin-top:24px" onclick="step='owner';R();go()">🛠️ Owner console</button>`}
   if(step==="owner")return ownerLogin();
   if(step==="pending")return `<h1>⏳ Awaiting approval</h1><div class="card">Your ${e(role)} account at <b>${e(school.name)}</b> must be approved by the school before you can see staff information.</div><button class="g w" onclick="approveDemo()">Demo: simulate school approval</button><button class="g w" style="margin-top:8px" onclick="out()">Back</button>`;
   return `<button class="g" onclick="step='school';R();go()">← ${e(school.name)}</button><h1>${mode==="in"?"Sign in":"Create account"}</h1>
