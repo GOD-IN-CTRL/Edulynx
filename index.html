@@ -52,6 +52,30 @@ nav button.on{color:var(--navy);box-shadow:inset 0 3px 0 var(--gold)}
 .b.me{margin-left:auto;background:var(--navy);color:#fff}
 .err{color:var(--bad);font-size:14px}.ok{color:var(--ok);font-size:14px}
 .demo{background:var(--gold-soft);border-radius:8px;padding:12px;margin-top:14px;color:var(--navy);font-size:14px}
+.banner{border-radius:12px;padding:20px;color:#fff;background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:4px solid var(--gold)}
+.banner h1{color:#fff;margin:2px 0 4px}.banner p{margin:0;color:#e8eef8;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.stat{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:12px 6px;text-align:center}
+.stat b{display:block;font:700 22px Georgia,serif;color:var(--navy)}.stat span{font-size:12px;color:var(--mut)}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.qa button{background:#fff;color:var(--navy);border:1px solid var(--bd);border-bottom:3px solid var(--gold);padding:15px 8px}
+.badge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:99px;background:var(--bad);color:#fff;font-size:11px;line-height:18px}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero,.banner{position:relative;overflow:hidden}
+.hero>*,.banner>*{position:relative;z-index:1}
+.hero::before,.banner::before{content:"";position:absolute;inset:-40%;z-index:0;background:radial-gradient(circle at 20% 30%,var(--gold) 0,transparent 32%),radial-gradient(circle at 80% 70%,var(--navy2) 0,transparent 42%);opacity:.5;filter:blur(28px);animation:drift 12s ease-in-out infinite alternate}
+.hero::after,.banner::after{content:"";position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent);animation:grid 7s linear infinite}
+@keyframes drift{to{transform:translate(9%,6%) rotate(24deg) scale(1.2)}}
+@keyframes grid{to{background-position:0 32px}}
+.hero svg{filter:drop-shadow(0 0 12px var(--gold));animation:sway 5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:perspective(300px) rotateY(-28deg)}50%{transform:perspective(300px) rotateY(28deg)}}
+@keyframes rise{from{opacity:0;transform:perspective(600px) translateY(22px) rotateX(-14deg)}to{opacity:1;transform:none}}
+.nw .pg>*,.nw .stat,.nw .qa button,.nw .li{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+button{transition:transform .15s,box-shadow .2s}
+button:active{transform:scale(.96);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 40%,transparent),0 0 22px var(--gold)}
+.card{transition:transform .2s,box-shadow .2s}
+.card:active{transform:perspective(600px) rotateX(3deg) scale(.99);box-shadow:0 10px 24px -10px var(--navy)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .link{background:none;color:var(--mut);font-weight:500;text-decoration:underline;margin-top:26px}
 </style>
 </head>
@@ -73,9 +97,15 @@ let S=load(),me=null,step="school",school=null,mode="in",role="parent",tab="home
 const $=id=>document.getElementById(id);
 const e=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const R=()=>{err="";ok=""};
+let fx=0;
+const TH={1:{navy:"#27364d",navy2:"#3e5470",gold:"#4aa3d8",soft:"#e3f1fa",motto:"Together we can"},2:{navy:"#0e4f5c",navy2:"#1b7384",gold:"#e8b923",soft:"#fbf1cc",motto:""},3:{navy:"#0b5a2b",navy2:"#17803f",gold:"#3dbd6e",soft:"#e4f5ea",motto:""}};
+function applyTheme(s){const t=(s&&TH[s.id])||{navy:"#0a1f44",navy2:"#17356f",gold:"#c29b40",soft:"#f6efdc"},r=document.documentElement.style;r.setProperty("--navy",t.navy);r.setProperty("--navy2",t.navy2);r.setProperty("--gold",t.gold);r.setProperty("--gold-soft",t.soft);const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t.navy}
 const MARK='<svg width="40" height="40" viewBox="0 0 44 44" fill="none" stroke="#c29b40" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 32h36M8 32V22M36 32V22M8 22Q22 2 36 22M15 32v-8M22 32v-12M29 32v-8"/></svg>';
 function hero(t,s,back){return `<div class="hero">${back||MARK}<h1>${t}</h1>${s?`<p>${s}</p>`:""}</div>`}
-function go(){const a=$("app");a.innerHTML=view();const m=$("th");if(m)m.scrollTop=m.scrollHeight}
+let lk="";
+function go(){const k=String(adm?"a"+at:me?me.id+tab+peer:step+mode),nw=k!==lk,a=$("app");lk=k;a.className=nw?"nw":"";a.innerHTML=view();const m=$("th");if(m)m.scrollTop=m.scrollHeight;
+ if(nw&&!matchMedia("(prefers-reduced-motion:reduce)").matches){a.querySelectorAll(".pg>*,.stat,.qa button,.li").forEach((x,i)=>x.style.animationDelay=Math.min(i,14)*55+"ms");
+  a.querySelectorAll(".stat b").forEach(b=>{const t=b.textContent,n=parseFloat(t);if(isNaN(n))return;const sf=t.replace(/[\d.]/g,""),s=performance.now();(function f(x){const p=Math.min((x-s)/900,1);b.textContent=Math.round(n*(1-Math.pow(1-p,3)))+sf;if(p<1)requestAnimationFrame(f)})(s)})}}
 function view(){
  if(adm)return admin();
  if(!me){
@@ -83,7 +113,7 @@ function view(){
    return hero("EduLynx","One secure bridge between your school and its community.")+`<div class="pg"><h2>Choose your school</h2><input id="sq" placeholder="Search for your school" value="${e(q)}" oninput="q=this.value;go();$('sq').focus();$('sq').setSelectionRange(q.length,q.length)">${l.map(s=>`<button class="li" onclick="pick(${s.id})">${e(s.name)}<span class="mut">Select</span></button>`).join("")||'<p class="mut">No registered school found.</p>'}<div style="text-align:center"><button class="link" onclick="step='owner';R();go()">Owner console</button></div></div>`}
   if(step==="owner")return ownerLogin();
   if(step==="pending")return hero("Awaiting approval","")+`<div class="pg"><div class="card">Your ${e(role)} account at <b>${e(school.name)}</b> must be approved by the school before you can see staff information.</div><button class="g w" onclick="approveDemo()">Demo: simulate school approval</button><button class="g w" style="margin-top:8px" onclick="out()">Back</button></div>`;
-  return hero(mode==="in"?"Sign in":"Create account",e(school.name),`<button class="back" onclick="step='school';R();go()">← Change school</button>`)+`<div class="pg">
+  return hero(mode==="in"?"Sign in":"Create account",e(school.name)+(TH[school.id]?.motto?" · "+e(TH[school.id].motto):""),`<button class="back" onclick="step='school';R();go()">← Change school</button>`)+`<div class="pg">
   <div class="row"><button class="${mode==="in"?"":"g"}" style="flex:1" onclick="mode='in';R();go()">Sign in</button><button class="${mode==="up"?"":"g"}" style="flex:1" onclick="mode='up';R();go()">Create account</button></div>
   ${mode==="up"?`<input id="nm" placeholder="Full name" style="margin-top:14px"><h3 style="margin-top:12px">Choose your role</h3><div class="chips">${["parent","student","teacher","principal"].map(r=>`<button class="${role===r?"on":""}" onclick="setRole('${r}')">${{parent:"Parent",student:"Student",teacher:"Teacher",principal:"Principal"}[r]}</button>`).join("")}</div>${ST({role})?'<p class="mut">Staff accounts need school approval.</p>':'<p class="mut">The school will link your account to the learner’s record.</p>'}`:""}
   <input id="em" type="email" placeholder="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password">
@@ -91,11 +121,11 @@ function view(){
   <div class="demo">Demo logins (password <b>demo</b>):<br>p@demo.com principal · t@demo.com teacher<br>parent@demo.com · s@demo.com</div></div>`}
  if(me.role==="teacher"&&school.paid===false)return hero("Access suspended","")+`<div class="pg"><div class="card">${e(school.name)}’s subscription is unpaid, so teacher access is switched off. Please ask your principal to renew it.</div><button class="g w" onclick="out()">Sign out</button></div>`;
  const T=[["home","Home"],["msg","Messages"],["meet","Meetings"],["rec","Records"],["sos","Help"]];if(me.role==="principal")T.push(["mng","Manage"]);
- const body={home:home,msg:msgs,meet:meets,rec:recs,sos:sos,mng:mng}[tab]();
- return `<header class="bar"><div><div class="sch">${e(school.name)}</div><div class="who">${e(me.name)} <span class="tag">${me.role}</span></div></div><button class="o" onclick="out()">Sign out</button></header><main class="pg">${body}</main><nav><div>${T.map(t=>`<button class="${tab===t[0]?"on":""}" onclick="tab='${t[0]}';peer=null;R();go()">${t[1]}</button>`).join("")}</div></nav>`}
+ const body={home:home,msg:msgs,meet:meets,rec:recs,sos:sos,mng:mng}[tab](),f=fx,bd={meet:S.meets.filter(m=>m.b===me.id&&m.s==="pending").length,mng:S.users.filter(u=>u.school===school.id&&!u.ok).length};fx=0;
+ return `<header class="bar"><div><div class="sch">${e(school.name)}</div><div class="who">${e(me.name)} <span class="tag">${me.role}</span></div></div><button class="o" onclick="out()">Sign out</button></header><main class="pg${f?" fx":""}">${body}</main><nav><div>${T.map(t=>`<button class="${tab===t[0]?"on":""}" onclick="tab='${t[0]}';peer=null;fx=1;R();go()">${t[1]}${bd[t[0]]?`<span class="badge">${bd[t[0]]}</span>`:""}</button>`).join("")}</div></nav>`}
 let keepv={};function keep(){keepv={nm:$("nm")?.value,em:$("em")?.value}}
 function setRole(r){keep();role=r;go();if(keepv.nm&&$("nm"))$("nm").value=keepv.nm;if(keepv.em&&$("em"))$("em").value=keepv.em}
-function pick(id){school=S.schools.find(s=>s.id===id);step="auth";R();go()}
+function pick(id){school=S.schools.find(s=>s.id===id);applyTheme(school);step="auth";R();go()}
 function auth(){const em=$("em").value.trim().toLowerCase(),pw=$("pw").value;R();
  if(!em||!pw){err="Enter your email and password.";return go()}
  if(mode==="in"){const u=S.users.find(u=>u.school===school.id&&u.email===em&&u.pw===pw);if(!u){err="Wrong email or password.";return go()}
@@ -108,11 +138,13 @@ function auth(){const em=$("em").value.trim().toLowerCase(),pw=$("pw").value;R()
  if(u.ok){me=u;tab="home"}else{pend=u;step="pending"}go()}
 let pend=null;
 function approveDemo(){pend.ok=true;save();me=pend;tab="home";go()}
-function out(){me=null;step="school";q="";school=null;R();go()}
+function out(){me=null;step="school";q="";school=null;applyTheme(null);R();go()}
 function mine(){return S.learners.filter(l=>l.school===school.id&&(ST(me)||l.code===me.code))}
 function home(){const A=S.ann.filter(a=>a.school===school.id).sort((a,b)=>b.t-a.t);
  const al=ST(me)?S.alerts.filter(a=>a.school===school.id).slice(-3).reverse():[];
- return `<h1>Hello, ${e(me.name.split(" ")[0])}</h1>${al.map(a=>`<div class="card alr"><b>Alert: ${e(a.type)}</b><div class="mut">${e(a.from)} · ${new Date(a.t).toLocaleString()}</div>${e(a.note)}</div>`).join("")}<h2>Announcements</h2>${A.map(a=>`<div class="card ann"><h3>${e(a.title)}</h3>${e(a.body)}<div class="mut" style="margin-top:6px">${e(a.by)} · ${new Date(a.t).toLocaleDateString()}</div></div>`).join("")||'<p class="mut">No announcements yet.</p>'}`}
+ const L=mine(),pm=S.meets.filter(m=>m.b===me.id&&m.s==="pending").length,pa=S.users.filter(u=>u.school===school.id&&!u.ok).length,hr=new Date().getHours(),mo=TH[school.id]?.motto;
+ const st=ST(me)?[[S.learners.filter(l=>l.school===school.id).length,"Learners"],[pm,"Meeting requests"],me.role==="principal"?[pa,"Awaiting approval"]:[A.length,"Notices"]]:[[L[0]?.att||"–","Attendance"],[pm,"Meeting requests"],[A.length,"Notices"]];
+ return `<div class="banner"><p>${hr<12?"Good morning":hr<18?"Good afternoon":"Good evening"}</p><h1>${e(me.name.split(" ")[0])}</h1><p>${e(school.name)}${mo?" · "+e(mo):""}</p></div><div class="stats">${st.map(x=>`<div class="stat"><b>${e(x[0])}</b><span>${x[1]}</span></div>`).join("")}</div><div class="qa">${[["msg","Messages"],["meet","Meetings"],["rec","Records"],["sos","Help &amp; safety"]].map(x=>`<button onclick="tab='${x[0]}';peer=null;fx=1;R();go()">${x[1]}</button>`).join("")}</div>${al.map(a=>`<div class="card alr"><b>Alert: ${e(a.type)}</b><div class="mut">${e(a.from)} · ${new Date(a.t).toLocaleString()}</div>${e(a.note)}</div>`).join("")}<h2>Announcements</h2>${A.map(a=>`<div class="card ann"><h3>${e(a.title)}</h3>${e(a.body)}<div class="mut" style="margin-top:6px">${e(a.by)} · ${new Date(a.t).toLocaleDateString()}</div></div>`).join("")||'<p class="mut">No announcements yet.</p>'}`}
 function contacts(){return S.users.filter(u=>u.school===school.id&&u.id!==me.id&&u.ok&&!(u.role==="teacher"&&school.paid===false)&&(ST(me)||ST(u)))}
 function msgs(){if(!peer){return `<h1>Messages</h1><p class="mut">Private, school-approved conversations only.</p>${contacts().map(u=>`<button class="li" onclick="peer=${u.id};go()">${e(u.name)} <span class="tag">${u.role}</span></button>`).join("")}`}
  const p=S.users.find(u=>u.id===peer);const th=S.msgs.filter(m=>(m.a===me.id&&m.b===peer)||(m.a===peer&&m.b===me.id));
@@ -137,7 +169,7 @@ const sc=id=>S.schools.find(s=>s.id===id),sn=id=>sc(id)?.name||'?';
 function ownerLogin(){return hero("Owner console","Restricted to the EduLynx owner.",`<button class="back" onclick="step='school';R();go()">← Back</button>`)+`<div class="pg"><input id='op' type='password' placeholder='Owner passcode'><div class='err'>${e(err)}</div><button class='w' onclick='ownIn()'>Open</button></div>`}
 function ownIn(){if($('op').value===OWNER){adm=true;at='over';R();go()}else{err='Wrong passcode.';go()}}
 function admin(){const T=[['over','Overview'],['usr','Users'],['lrn','Learners'],['chk','Checks'],['log','Logs']];const B={over:aOver,usr:aUsr,lrn:aLrn,chk:aChk,log:aLog}[at]();return `<header class='bar'><div class='sch'>Owner console</div><button class='o' onclick="adm=false;step='school';go()">Exit</button></header><div class='pg'><div class='row' style='flex-wrap:wrap'>${T.map(t=>`<button class='${at===t[0]?'':'g'}' onclick="at='${t[0]}';ed=null;el=-1;R();go()">${t[1]}</button>`).join('')}</div>${B}</div>`}
-function aOver(){return `<p class='mut'>Message contents are never shown here, to protect families’ privacy.</p>`+S.schools.map(s=>{const U=S.users.filter(u=>u.school===s.id),r=x=>U.filter(u=>u.role===x).length,ids=U.map(u=>u.id);return `<div class='card'><div class='row sp'><h3>${e(s.name)}</h3><span class='tag'>${s.paid===false?'Unpaid':'Active'}</span></div><p class='mut'>Principals ${r('principal')} · Teachers ${r('teacher')} · Parents ${r('parent')} · Students ${r('student')}<br>Pending approval ${U.filter(u=>!u.ok).length} · Learners ${S.learners.filter(l=>l.school===s.id).length}<br>Messages ${S.msgs.filter(m=>ids.includes(m.a)).length} · Meetings ${S.meets.filter(m=>ids.includes(m.a)).length} · Alerts ${S.alerts.filter(a=>a.school===s.id).length}</p><button class='g w' onclick='sp(${s.id})'>${s.paid===false?'Mark as paid':'Mark as unpaid'}</button></div>`}).join('')+`<div class='card'><button class='g w' onclick='tx()'>${ex?'Hide':'Show'} data export</button>${ex?`<textarea rows='8' readonly>${e(ex)}</textarea>`:''}<button class='d w' style='margin-top:8px' onclick='rs()'>${rc?'Tap again to erase everything':'Reset all demo data'}</button></div>`}
+function aOver(){return `<div class='stats'><div class='stat'><b>${S.schools.length}</b><span>Schools</span></div><div class='stat'><b>${S.users.length}</b><span>Users</span></div><div class='stat'><b>${S.schools.filter(s=>s.paid!==false).length}</b><span>Active plans</span></div></div><p class='mut'>Message contents are never shown here, to protect families’ privacy.</p>`+S.schools.map(s=>{const U=S.users.filter(u=>u.school===s.id),r=x=>U.filter(u=>u.role===x).length,ids=U.map(u=>u.id);return `<div class='card'><div class='row sp'><h3>${e(s.name)}</h3><span class='tag'>${s.paid===false?'Unpaid':'Active'}</span></div><p class='mut'>Principals ${r('principal')} · Teachers ${r('teacher')} · Parents ${r('parent')} · Students ${r('student')}<br>Pending approval ${U.filter(u=>!u.ok).length} · Learners ${S.learners.filter(l=>l.school===s.id).length}<br>Messages ${S.msgs.filter(m=>ids.includes(m.a)).length} · Meetings ${S.meets.filter(m=>ids.includes(m.a)).length} · Alerts ${S.alerts.filter(a=>a.school===s.id).length}</p><button class='g w' onclick='sp(${s.id})'>${s.paid===false?'Mark as paid':'Mark as unpaid'}</button></div>`}).join('')+`<div class='card'><button class='g w' onclick='tx()'>${ex?'Hide':'Show'} data export</button>${ex?`<textarea rows='8' readonly>${e(ex)}</textarea>`:''}<button class='d w' style='margin-top:8px' onclick='rs()'>${rc?'Tap again to erase everything':'Reset all demo data'}</button></div>`}
 function sp(id){const s=sc(id);s.paid=s.paid===false;save();go()}
 function tx(){ex=ex?'':JSON.stringify({...S,users:S.users.map(({pw,...u})=>u)},null,1);go()}
 function rs(){if(!rc){rc=true;return go()}S=seed();save();rc=false;go()}
