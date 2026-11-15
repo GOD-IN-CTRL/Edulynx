@@ -61,21 +61,8 @@ nav button.on{color:var(--navy);box-shadow:inset 0 3px 0 var(--gold)}
 .qa button{background:#fff;color:var(--navy);border:1px solid var(--bd);border-bottom:3px solid var(--gold);padding:15px 8px}
 .badge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:99px;background:var(--bad);color:#fff;font-size:11px;line-height:18px}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.hero,.banner{position:relative;overflow:hidden}
-.hero>*,.banner>*{position:relative;z-index:1}
-.hero::before,.banner::before{content:"";position:absolute;inset:-40%;z-index:0;background:radial-gradient(circle at 20% 30%,var(--gold) 0,transparent 32%),radial-gradient(circle at 80% 70%,var(--navy2) 0,transparent 42%);opacity:.5;filter:blur(28px);animation:drift 12s ease-in-out infinite alternate}
-.hero::after,.banner::after{content:"";position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent);animation:grid 7s linear infinite}
-@keyframes drift{to{transform:translate(9%,6%) rotate(24deg) scale(1.2)}}
-@keyframes grid{to{background-position:0 32px}}
-.hero svg{filter:drop-shadow(0 0 12px var(--gold));animation:sway 5s ease-in-out infinite}
-@keyframes sway{0%,100%{transform:perspective(300px) rotateY(-28deg)}50%{transform:perspective(300px) rotateY(28deg)}}
-@keyframes rise{from{opacity:0;transform:perspective(600px) translateY(22px) rotateX(-14deg)}to{opacity:1;transform:none}}
-.nw .pg>*,.nw .stat,.nw .qa button,.nw .li{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
-button{transition:transform .15s,box-shadow .2s}
-button:active{transform:scale(.96);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 40%,transparent),0 0 22px var(--gold)}
-.card{transition:transform .2s,box-shadow .2s}
-.card:active{transform:perspective(600px) rotateX(3deg) scale(.99);box-shadow:0 10px 24px -10px var(--navy)}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.fx{animation:up .3s ease both}
+@media (prefers-reduced-motion:reduce){.fx{animation:none}}
 .link{background:none;color:var(--mut);font-weight:500;text-decoration:underline;margin-top:26px}
 </style>
 </head>
@@ -102,10 +89,7 @@ const TH={1:{navy:"#27364d",navy2:"#3e5470",gold:"#4aa3d8",soft:"#e3f1fa",motto:
 function applyTheme(s){const t=(s&&TH[s.id])||{navy:"#0a1f44",navy2:"#17356f",gold:"#c29b40",soft:"#f6efdc"},r=document.documentElement.style;r.setProperty("--navy",t.navy);r.setProperty("--navy2",t.navy2);r.setProperty("--gold",t.gold);r.setProperty("--gold-soft",t.soft);const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t.navy}
 const MARK='<svg width="40" height="40" viewBox="0 0 44 44" fill="none" stroke="#c29b40" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 32h36M8 32V22M36 32V22M8 22Q22 2 36 22M15 32v-8M22 32v-12M29 32v-8"/></svg>';
 function hero(t,s,back){return `<div class="hero">${back||MARK}<h1>${t}</h1>${s?`<p>${s}</p>`:""}</div>`}
-let lk="";
-function go(){const k=String(adm?"a"+at:me?me.id+tab+peer:step+mode),nw=k!==lk,a=$("app");lk=k;a.className=nw?"nw":"";a.innerHTML=view();const m=$("th");if(m)m.scrollTop=m.scrollHeight;
- if(nw&&!matchMedia("(prefers-reduced-motion:reduce)").matches){a.querySelectorAll(".pg>*,.stat,.qa button,.li").forEach((x,i)=>x.style.animationDelay=Math.min(i,14)*55+"ms");
-  a.querySelectorAll(".stat b").forEach(b=>{const t=b.textContent,n=parseFloat(t);if(isNaN(n))return;const sf=t.replace(/[\d.]/g,""),s=performance.now();(function f(x){const p=Math.min((x-s)/900,1);b.textContent=Math.round(n*(1-Math.pow(1-p,3)))+sf;if(p<1)requestAnimationFrame(f)})(s)})}}
+function go(){const a=$("app");a.innerHTML=view();const m=$("th");if(m)m.scrollTop=m.scrollHeight}
 function view(){
  if(adm)return admin();
  if(!me){
