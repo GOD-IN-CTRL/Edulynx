@@ -61,8 +61,21 @@ nav button.on{color:var(--navy);box-shadow:inset 0 3px 0 var(--gold)}
 .qa button{background:#fff;color:var(--navy);border:1px solid var(--bd);border-bottom:3px solid var(--gold);padding:15px 8px}
 .badge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:99px;background:var(--bad);color:#fff;font-size:11px;line-height:18px}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.fx{animation:up .3s ease both}
-@media (prefers-reduced-motion:reduce){.fx{animation:none}}
+.hero,.banner{position:relative;overflow:hidden}
+.hero>*,.banner>*{position:relative;z-index:1}
+.hero::before,.banner::before{content:"";position:absolute;inset:-40%;z-index:0;background:radial-gradient(circle at 20% 30%,var(--gold) 0,transparent 32%),radial-gradient(circle at 80% 70%,var(--navy2) 0,transparent 42%);opacity:.5;filter:blur(28px);animation:drift 12s ease-in-out infinite alternate}
+.hero::after,.banner::after{content:"";position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent);animation:grid 7s linear infinite}
+@keyframes drift{to{transform:translate(9%,6%) rotate(24deg) scale(1.2)}}
+@keyframes grid{to{background-position:0 32px}}
+.hero svg{filter:drop-shadow(0 0 12px var(--gold));animation:sway 5s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:perspective(300px) rotateY(-28deg)}50%{transform:perspective(300px) rotateY(28deg)}}
+@keyframes rise{from{opacity:0;transform:perspective(600px) translateY(22px) rotateX(-14deg)}to{opacity:1;transform:none}}
+.nw .pg>*,.nw .stat,.nw .qa button,.nw .li{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+button{transition:transform .15s,box-shadow .2s}
+button:active{transform:scale(.96);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 40%,transparent),0 0 22px var(--gold)}
+.card{transition:transform .2s,box-shadow .2s}
+.card:active{transform:perspective(600px) rotateX(3deg) scale(.99);box-shadow:0 10px 24px -10px var(--navy)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .link{background:none;color:var(--mut);font-weight:500;text-decoration:underline;margin-top:26px}
 </style>
 </head>
@@ -71,15 +84,15 @@ nav button.on{color:var(--navy);box-shadow:inset 0 3px 0 var(--gold)}
 <script>
 const ST=u=>u&&(u.role==="teacher"||u.role==="principal");
 function seed(){return{schools:[{id:1,name:"Sethong primary school"},{id:2,name:"Matokane secondary"},{id:3,name:"Boke Agricultural high school"}],
-users:[{id:1,school:1,name:"Ms Dlamini",email:"t@demo.com",pw:"demo",role:"teacher",ok:true},
-{id:2,school:1,name:"Mr Khumalo",email:"p@demo.com",pw:"demo",role:"principal",ok:true},
+users:[{id:1,school:1,name:"Ms Dlamini",email:"t@demo.com",phone:"0711111111",pw:"demo",role:"teacher",ok:true},
+{id:2,school:1,name:"Mr Khumalo",email:"p@demo.com",phone:"0722222222",pw:"demo",role:"principal",ok:true},
 {id:3,school:1,name:"Priya Naidoo",email:"parent@demo.com",pw:"demo",role:"parent",ok:true,code:"EL-1001"},
 {id:4,school:1,name:"Aiden Naidoo",email:"s@demo.com",pw:"demo",role:"student",ok:true,code:"EL-1001"}],
 learners:[{school:1,code:"EL-1001",name:"Aiden Naidoo",grade:"Grade 5",att:"96%",marks:"Maths 78%, English 71%, Science 84%",note:"Great progress in Science."},
 {school:1,code:"EL-1002",name:"Zoe Peters",grade:"Grade 5",att:"91%",marks:"Maths 66%, English 80%, Science 70%",note:"Needs support with fractions."}],
 msgs:[],ann:[{school:1,title:"Welcome to EduLynx",body:"Use this app for messages, meetings and school notices.",by:"Mr Khumalo",t:Date.now()}],meets:[],alerts:[],n:10}}
-function load(){try{const x=localStorage.getItem("el1");if(x)return JSON.parse(x)}catch(e){}return seed()}
-function save(){try{localStorage.setItem("el1",JSON.stringify(S))}catch(e){}}
+function load(){try{const x=localStorage.getItem("el2");if(x)return JSON.parse(x)}catch(e){}return seed()}
+function save(){try{localStorage.setItem("el2",JSON.stringify(S))}catch(e){}}
 let S=load(),me=null,step="school",school=null,mode="in",role="parent",tab="home",peer=null,err="",ok="",q="";
 const $=id=>document.getElementById(id);
 const e=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -89,20 +102,25 @@ const TH={1:{navy:"#27364d",navy2:"#3e5470",gold:"#4aa3d8",soft:"#e3f1fa",motto:
 function applyTheme(s){const t=(s&&TH[s.id])||{navy:"#0a1f44",navy2:"#17356f",gold:"#c29b40",soft:"#f6efdc"},r=document.documentElement.style;r.setProperty("--navy",t.navy);r.setProperty("--navy2",t.navy2);r.setProperty("--gold",t.gold);r.setProperty("--gold-soft",t.soft);const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t.navy}
 const MARK='<svg width="40" height="40" viewBox="0 0 44 44" fill="none" stroke="#c29b40" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 32h36M8 32V22M36 32V22M8 22Q22 2 36 22M15 32v-8M22 32v-12M29 32v-8"/></svg>';
 function hero(t,s,back){return `<div class="hero">${back||MARK}<h1>${t}</h1>${s?`<p>${s}</p>`:""}</div>`}
-function go(){const a=$("app");a.innerHTML=view();const m=$("th");if(m)m.scrollTop=m.scrollHeight}
+let lk="";
+function go(){const k=String(adm?"a"+at:me?me.id+tab+peer:step+mode),nw=k!==lk,a=$("app");lk=k;a.className=nw?"nw":"";a.innerHTML=view();const m=$("th");if(m)m.scrollTop=m.scrollHeight;
+ if(nw&&!matchMedia("(prefers-reduced-motion:reduce)").matches){a.querySelectorAll(".pg>*,.stat,.qa button,.li").forEach((x,i)=>x.style.animationDelay=Math.min(i,14)*55+"ms");
+  a.querySelectorAll(".stat b").forEach(b=>{const t=b.textContent,n=parseFloat(t);if(isNaN(n))return;const sf=t.replace(/[\d.]/g,""),s=performance.now();(function f(x){const p=Math.min((x-s)/900,1);b.textContent=Math.round(n*(1-Math.pow(1-p,3)))+sf;if(p<1)requestAnimationFrame(f)})(s)})}}
 function view(){
  if(adm)return admin();
  if(!me){
   if(step==="school"){const l=S.schools.filter(s=>s.name.toLowerCase().includes(q.toLowerCase()));
    return hero("EduLynx","One secure bridge between your school and its community.")+`<div class="pg"><h2>Choose your school</h2><input id="sq" placeholder="Search for your school" value="${e(q)}" oninput="q=this.value;go();$('sq').focus();$('sq').setSelectionRange(q.length,q.length)">${l.map(s=>`<button class="li" onclick="pick(${s.id})">${e(s.name)}<span class="mut">Select</span></button>`).join("")||'<p class="mut">No registered school found.</p>'}<div style="text-align:center"><button class="link" onclick="step='owner';R();go()">Owner console</button></div></div>`}
+  if(step==="otp")return otpView();
   if(step==="owner")return ownerLogin();
   if(step==="pending")return hero("Awaiting approval","")+`<div class="pg"><div class="card">Your ${e(role)} account at <b>${e(school.name)}</b> must be approved by the school before you can see staff information.</div><button class="g w" onclick="approveDemo()">Demo: simulate school approval</button><button class="g w" style="margin-top:8px" onclick="out()">Back</button></div>`;
   return hero(mode==="in"?"Sign in":"Create account",e(school.name)+(TH[school.id]?.motto?" · "+e(TH[school.id].motto):""),`<button class="back" onclick="step='school';R();go()">← Change school</button>`)+`<div class="pg">
   <div class="row"><button class="${mode==="in"?"":"g"}" style="flex:1" onclick="mode='in';R();go()">Sign in</button><button class="${mode==="up"?"":"g"}" style="flex:1" onclick="mode='up';R();go()">Create account</button></div>
   ${mode==="up"?`<input id="nm" placeholder="Full name" style="margin-top:14px"><h3 style="margin-top:12px">Choose your role</h3><div class="chips">${["parent","student","teacher","principal"].map(r=>`<button class="${role===r?"on":""}" onclick="setRole('${r}')">${{parent:"Parent",student:"Student",teacher:"Teacher",principal:"Principal"}[r]}</button>`).join("")}</div>${ST({role})?'<p class="mut">Staff accounts need school approval.</p>':'<p class="mut">The school will link your account to the learner’s record.</p>'}`:""}
-  <input id="em" type="email" placeholder="Email" autocomplete="username"><input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+  ${mode==="up"?`<h3 style="margin-top:12px">Sign up with</h3><div class="chips" style="grid-template-columns:repeat(3,1fr)">${[["email","Email"],["phone","Phone"],["both","Both"]].map(x=>`<button class="${meth===x[0]?"on":""}" onclick="setMeth('${x[0]}')">${x[1]}</button>`).join("")}</div>${meth!=="phone"?'<input id="em" type="email" placeholder="Email" autocomplete="email">':""}${meth!=="email"?'<input id="ph" type="tel" placeholder="Phone number" autocomplete="tel">':""}`:'<input id="em" placeholder="Email or phone number" autocomplete="username">'}
+  <div class="row"><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button class="g" style="flex:none" onclick="tp()">Show</button></div><div class="ok">${e(ok)}</div>
   <div class="err">${e(err)}</div><button class="w" style="margin-top:6px" onclick="auth()">${mode==="in"?"Sign in":"Create account"}</button>
-  <div class="demo">Demo logins (password <b>demo</b>):<br>p@demo.com principal · t@demo.com teacher<br>parent@demo.com · s@demo.com</div></div>`}
+  ${mode==="in"?`<div class="row sp"><button class="link" style="margin:8px 0 0" onclick="goOtp('reset')">Forgot password?</button><button class="link" style="margin:8px 0 0" onclick="goOtp('login')">Sign in with a code</button></div>`:""}<div class="demo">Demo logins (password <b>demo</b>): p@demo.com or 0722222222 principal · t@demo.com or 0711111111 teacher · parent@demo.com · s@demo.com</div></div>`}
  if(me.role==="teacher"&&school.paid===false)return hero("Access suspended","")+`<div class="pg"><div class="card">${e(school.name)}’s subscription is unpaid, so teacher access is switched off. Please ask your principal to renew it.</div><button class="g w" onclick="out()">Sign out</button></div>`;
  const T=[["home","Home"],["msg","Messages"],["meet","Meetings"],["rec","Records"],["sos","Help"]];if(me.role==="principal")T.push(["mng","Manage"]);
  const body={home:home,msg:msgs,meet:meets,rec:recs,sos:sos,mng:mng}[tab](),f=fx,bd={meet:S.meets.filter(m=>m.b===me.id&&m.s==="pending").length,mng:S.users.filter(u=>u.school===school.id&&!u.ok).length};fx=0;
@@ -110,16 +128,30 @@ function view(){
 let keepv={};function keep(){keepv={nm:$("nm")?.value,em:$("em")?.value}}
 function setRole(r){keep();role=r;go();if(keepv.nm&&$("nm"))$("nm").value=keepv.nm;if(keepv.em&&$("em"))$("em").value=keepv.em}
 function pick(id){school=S.schools.find(s=>s.id===id);applyTheme(school);step="auth";R();go()}
-function auth(){const em=$("em").value.trim().toLowerCase(),pw=$("pw").value;R();
- if(!em||!pw){err="Enter your email and password.";return go()}
- if(mode==="in"){const u=S.users.find(u=>u.school===school.id&&u.email===em&&u.pw===pw);if(!u){err="Wrong email or password.";return go()}
+function auth(){const em=($("em")?.value||"").trim().toLowerCase(),phn=($("ph")?.value||"").trim(),pw=$("pw").value;R();
+ if(mode==="in"?(!em||!pw):((meth!=="phone"&&!em)||(meth!=="email"&&!phn)||!pw)){err=mode==="in"?"Enter your email or phone number and password.":"Fill in every field.";return go()}
+ if(mode==="in"){const u=fu(em);if(!u||u.pw!==pw){err="Wrong login details or password.";return go()}
   if(!u.ok){role=u.role;me=null;pend=u;step="pending";return go()}me=u;tab="home";return go()}
  const nm=$("nm").value.trim();if(!nm){err="Enter your full name.";return go()}
- if(S.users.some(u=>u.school===school.id&&u.email===em)){err="That email is already registered.";return go()}
+ if(em&&S.users.some(u=>u.school===school.id&&u.email===em)){err="That email is already registered.";return go()}
+ if(phn&&ph(phn).length<9){err="Enter a valid phone number.";return go()}
+ if(phn&&S.users.some(u=>u.school===school.id&&u.phone&&ph(u.phone)===ph(phn))){err="That phone number is already registered.";return go()}
  if(role==="principal"&&S.users.some(u=>u.school===school.id&&u.role==="principal")){err="This school already has a principal. Ask the school owner for help.";return go()}
  if(pw.length<4){err="Use a longer password.";return go()}
- const u={id:S.n++,school:school.id,name:nm,email:em,pw,role,ok:!ST({role})};S.users.push(u);save();
+ const u={id:S.n++,school:school.id,name:nm,email:meth==="phone"?"":em,phone:meth==="email"?"":phn,pw,role,ok:!ST({role})};S.users.push(u);save();
  if(u.ok){me=u;tab="home"}else{pend=u;step="pending"}go()}
+let meth="email",otp=null;
+const ph=s=>{let d=String(s||"").replace(/\D/g,"");if(d.startsWith("27")&&d.length===11)d="0"+d.slice(2);return d};
+const fu=id=>{id=String(id||"").trim();return S.users.find(u=>u.school===school.id&&(id.includes("@")?u.email===id.toLowerCase():u.phone&&ph(id)&&ph(u.phone)===ph(id)))};
+function setMeth(m){keep();meth=m;go();if(keepv.nm&&$("nm"))$("nm").value=keepv.nm;if(keepv.em&&$("em"))$("em").value=keepv.em}
+function tp(){const p=$("pw"),b=p.nextElementSibling,s=p.type==="password";p.type=s?"text":"password";b.textContent=s?"Hide":"Show"}
+function goOtp(p){otp={purpose:p,sent:0};step="otp";R();go()}
+function sendOtp(re){R();if(!re){const u=fu($("oi").value);if(!u){err="No account found with that email or phone number.";return go()}otp.uid=u.id}otp.code=String(Math.floor(100000+Math.random()*900000));otp.exp=Date.now()+600000;otp.sent=1;go()}
+function checkOtp(){R();const c=$("oc").value.trim();if(Date.now()>otp.exp){err="Code expired. Send a new one.";return go()}if(c!==otp.code){err="That code is wrong.";return go()}const u=S.users.find(x=>x.id===otp.uid);
+ if(otp.purpose==="reset"){const n=$("on").value;if(n.length<4){err="Use a longer password.";return go()}u.pw=n;save();otp=null;step="auth";mode="in";ok="Password changed. Sign in with your new password.";return go()}
+ otp=null;if(!u.ok){role=u.role;pend=u;step="pending";return go()}me=u;tab="home";go()}
+function otpView(){const rs=otp.purpose==="reset";
+ return hero(rs?"Reset password":"Sign in with a code",e(school.name),`<button class="back" onclick="step='auth';otp=null;R();go()">← Back</button>`)+`<div class="pg">${!otp.sent?`<p class="mut">Enter the email or phone number on your account.</p><input id="oi" placeholder="Email or phone number"><div class="err">${e(err)}</div><button class="w" onclick="sendOtp()">Send code</button>`:`<div class="demo">Demo mode: no SMS or email is sent yet. Your code is <b style="font-size:20px;letter-spacing:3px">${otp.code}</b></div><input id="oc" inputmode="numeric" maxlength="6" placeholder="6-digit code">${rs?'<input id="on" type="password" placeholder="New password">':""}<div class="err">${e(err)}</div><button class="w" onclick="checkOtp()">${rs?"Reset password":"Sign in"}</button><button class="link" onclick="sendOtp(1)">Resend code</button>`}</div>`}
 let pend=null;
 function approveDemo(){pend.ok=true;save();me=pend;tab="home";go()}
 function out(){me=null;step="school";q="";school=null;applyTheme(null);R();go()}
@@ -144,7 +176,7 @@ function sos(){const mineA=S.alerts.filter(a=>a.school===school.id&&a.uid===me.i
  return `<h1>Help &amp; safety</h1><div class="card"><select id="at"><option>I need a parent to contact the school</option><option>I need a staff member’s attention</option><option>Emergency – urgent help needed</option></select><input id="an" placeholder="Add a short note (optional)"><button class="d w" onclick="alertSend()">Send alert</button><div class="ok">${e(ok)}</div><p class="mut">Alerts go to school staff${me.role==="student"?" and your linked parent":""} straight away.</p></div>${mineA.map(a=>`<div class="card mut">Sent: ${e(a.type)} · ${new Date(a.t).toLocaleTimeString()}</div>`).join("")}`}
 function alertSend(){S.alerts.push({school:school.id,uid:me.id,from:me.name+" ("+me.role+")",type:$("at").value,note:$("an").value,t:Date.now()});save();R();ok="Alert sent. Help is on the way.";go()}
 function mng(){const P=S.users.filter(u=>u.school===school.id&&!u.ok),U=S.users.filter(u=>u.school===school.id&&u.ok&&!ST(u)&&!u.code),L=S.learners.filter(l=>l.school===school.id);
- return `<h1>Manage school</h1><h2>Subscription</h2><div class="card"><b>${school.paid===false?"Unpaid":"Active"}</b><p class="mut">If the monthly fee isn’t paid, teachers lose access to the app until payment is made.</p><button class="w ${school.paid===false?"":"d"}" onclick="pay(${school.paid===false})">${school.paid===false?"Demo: pay now":"Demo: simulate missed payment"}</button></div><h2>Staff awaiting approval</h2>${P.map(u=>`<div class="card row sp"><div><b>${e(u.name)}</b><div class="mut">${u.role} · ${e(u.email)}</div></div><button onclick="appr(${u.id})">Approve</button></div>`).join("")||'<p class="mut">Nobody waiting.</p>'}<h2>Link accounts to learners</h2>${U.map(u=>`<div class="card"><b>${e(u.name)}</b> <span class="tag">${u.role}</span><select id="lk${u.id}">${L.map(l=>`<option value="${l.code}">${e(l.name)}</option>`).join("")}</select><button class="w" onclick="lnk(${u.id})">Link</button></div>`).join("")||'<p class="mut">All accounts are linked.</p>'}<h2>Post announcement</h2><div class="card"><input id="ht" placeholder="Title"><textarea id="hb" rows="3" placeholder="Message to the whole school"></textarea><button class="w" onclick="post()">Publish</button></div>`}
+ return `<h1>Manage school</h1><h2>Subscription</h2><div class="card"><b>${school.paid===false?"Unpaid":"Active"}</b><p class="mut">If the monthly fee isn’t paid, teachers lose access to the app until payment is made.</p><button class="w ${school.paid===false?"":"d"}" onclick="pay(${school.paid===false})">${school.paid===false?"Demo: pay now":"Demo: simulate missed payment"}</button></div><h2>Staff awaiting approval</h2>${P.map(u=>`<div class="card row sp"><div><b>${e(u.name)}</b><div class="mut">${u.role} · ${e(u.email||u.phone)}</div></div><button onclick="appr(${u.id})">Approve</button></div>`).join("")||'<p class="mut">Nobody waiting.</p>'}<h2>Link accounts to learners</h2>${U.map(u=>`<div class="card"><b>${e(u.name)}</b> <span class="tag">${u.role}</span><select id="lk${u.id}">${L.map(l=>`<option value="${l.code}">${e(l.name)}</option>`).join("")}</select><button class="w" onclick="lnk(${u.id})">Link</button></div>`).join("")||'<p class="mut">All accounts are linked.</p>'}<h2>Post announcement</h2><div class="card"><input id="ht" placeholder="Title"><textarea id="hb" rows="3" placeholder="Message to the whole school"></textarea><button class="w" onclick="post()">Publish</button></div>`}
 function lnk(id){S.users.find(u=>u.id===id).code=$("lk"+id).value;save();go()}
 function pay(v){school.paid=v;save();go()}
 const OWNER='owner123';let adm=false,at='over',ed=null,el=-1,rc=false,dc=null,ex='';
@@ -157,14 +189,14 @@ function aOver(){return `<div class='stats'><div class='stat'><b>${S.schools.len
 function sp(id){const s=sc(id);s.paid=s.paid===false;save();go()}
 function tx(){ex=ex?'':JSON.stringify({...S,users:S.users.map(({pw,...u})=>u)},null,1);go()}
 function rs(){if(!rc){rc=true;return go()}S=seed();save();rc=false;go()}
-function aUsr(){return S.users.map(u=>ed===u.id?`<div class='card'><input id='en' value='${e(u.name)}'><input id='ee' value='${e(u.email)}'><select id='er'>${['parent','student','teacher','principal'].map(r=>`<option ${u.role===r?'selected':''}>${r}</option>`).join('')}</select><div class='err'>${e(err)}</div><div class='row'><button onclick='usv(${u.id})'>Save</button><button class='g' onclick='ed=null;R();go()'>Cancel</button></div></div>`:`<div class='card'><div class='row sp'><b>${e(u.name)}</b><span class='tag'>${u.role}</span></div><div class='mut'>${e(u.email)} · ${e(sn(u.school))}${u.code?' · '+e(u.code):''}<br>${u.ok?'Approved':'Not approved'}</div><div class='row' style='flex-wrap:wrap;margin-top:8px'><button class='g' onclick='ed=${u.id};R();go()'>Edit</button>${u.ok?'':`<button onclick='uap(${u.id})'>Approve</button>`}<button class='g' onclick='upw(${u.id})'>Reset password</button><button class='d' onclick='udl(${u.id})'>${dc===u.id?'Tap again':'Delete'}</button></div></div>`).join('')+`<div class='ok'>${e(ok)}</div>`}
-function usv(id){const u=S.users.find(x=>x.id===id),n=$('en').value.trim(),m=$('ee').value.trim().toLowerCase();R();if(!n||!m){err='Name and email are required.';return go()}if(S.users.some(x=>x.id!==id&&x.school===u.school&&x.email===m)){err='Email already used at this school.';return go()}u.name=n;u.email=m;u.role=$('er').value;save();ed=null;go()}
+function aUsr(){return S.users.map(u=>ed===u.id?`<div class='card'><input id='en' value='${e(u.name)}'><input id='ee' value='${e(u.email)}'><select id='er'>${['parent','student','teacher','principal'].map(r=>`<option ${u.role===r?'selected':''}>${r}</option>`).join('')}</select><div class='err'>${e(err)}</div><div class='row'><button onclick='usv(${u.id})'>Save</button><button class='g' onclick='ed=null;R();go()'>Cancel</button></div></div>`:`<div class='card'><div class='row sp'><b>${e(u.name)}</b><span class='tag'>${u.role}</span></div><div class='mut'>${e([u.email,u.phone].filter(Boolean).join(" · "))} · ${e(sn(u.school))}${u.code?' · '+e(u.code):''}<br>${u.ok?'Approved':'Not approved'}</div><div class='row' style='flex-wrap:wrap;margin-top:8px'><button class='g' onclick='ed=${u.id};R();go()'>Edit</button>${u.ok?'':`<button onclick='uap(${u.id})'>Approve</button>`}<button class='g' onclick='upw(${u.id})'>Reset password</button><button class='d' onclick='udl(${u.id})'>${dc===u.id?'Tap again':'Delete'}</button></div></div>`).join('')+`<div class='ok'>${e(ok)}</div>`}
+function usv(id){const u=S.users.find(x=>x.id===id),n=$('en').value.trim(),m=$('ee').value.trim().toLowerCase();R();if(!n||(!m&&!u.phone)){err='Name and email or phone are required.';return go()}if(m&&S.users.some(x=>x.id!==id&&x.school===u.school&&x.email===m)){err='Email already used at this school.';return go()}u.name=n;u.email=m;u.role=$('er').value;save();ed=null;go()}
 function uap(id){S.users.find(u=>u.id===id).ok=true;save();go()}
 function upw(id){const u=S.users.find(x=>x.id===id);u.pw='temp1234';save();R();ok='Temporary password for '+u.name+': temp1234';go()}
 function udl(id){if(dc!==id){dc=id;return go()}S.users=S.users.filter(u=>u.id!==id);S.msgs=S.msgs.filter(m=>m.a!==id&&m.b!==id);S.meets=S.meets.filter(m=>m.a!==id&&m.b!==id);dc=null;save();go()}
 function aLrn(){return `<p class='mut'>Learner records are sensitive. Only edit them to fix mistakes.</p>`+S.learners.map((l,i)=>el===i?`<div class='card'><input id='ln' value='${e(l.name)}'><input id='lg' value='${e(l.grade)}'><input id='la' value='${e(l.att)}'><input id='lm' value='${e(l.marks)}'><input id='lt' value='${e(l.note)}'><div class='row'><button onclick='lsv(${i})'>Save</button><button class='g' onclick='el=-1;go()'>Cancel</button></div></div>`:`<div class='card'><div class='row sp'><h3>${e(l.name)}</h3><span class='tag'>${e(l.code)}</span></div><div class='mut'>${e(sn(l.school))} · ${e(l.grade)} · ${e(l.att)}<br>${e(l.marks)}<br>${e(l.note)}</div><button class='g' style='margin-top:8px' onclick='el=${i};go()'>Edit</button></div>`).join('')}
 function lsv(i){const l=S.learners[i];l.name=$('ln').value;l.grade=$('lg').value;l.att=$('la').value;l.marks=$('lm').value;l.note=$('lt').value;save();el=-1;go()}
-function aChk(){const c=[],seen={};S.users.forEach(u=>{const k=u.school+'|'+u.email;if(seen[k])c.push('Duplicate email: '+u.email+' at '+sn(u.school));seen[k]=1;if((u.role==='parent'||u.role==='student')&&u.ok&&!u.code)c.push(u.name+' ('+u.role+') has no linked learner');if(u.code&&!S.learners.some(l=>l.school===u.school&&l.code===u.code))c.push(u.name+' is linked to a missing learner ('+u.code+')');if(!u.ok)c.push(u.name+' ('+u.role+') is waiting for approval');if(u.role==='teacher'&&sc(u.school)?.paid===false)c.push(u.name+' is locked out (unpaid school)')});S.meets.forEach(m=>{if(!S.users.some(u=>u.id===m.a)||!S.users.some(u=>u.id===m.b))c.push('A meeting refers to a deleted user')});S.schools.forEach(s=>{if(!S.users.some(u=>u.school===s.id&&u.role==='principal'&&u.ok))c.push(s.name+' has no approved principal')});return `<p class='mut'>Automatic checks for common mistakes.</p>`+(c.map(x=>`<div class='card'>${e(x)}</div>`).join('')||`<div class='card'>No problems found.</div>`)}
+function aChk(){const c=[],seen={};S.users.forEach(u=>{const k=u.school+'|'+u.email;if(u.email&&seen[k])c.push('Duplicate email: '+u.email+' at '+sn(u.school));seen[k]=1;if((u.role==='parent'||u.role==='student')&&u.ok&&!u.code)c.push(u.name+' ('+u.role+') has no linked learner');if(u.code&&!S.learners.some(l=>l.school===u.school&&l.code===u.code))c.push(u.name+' is linked to a missing learner ('+u.code+')');if(!u.ok)c.push(u.name+' ('+u.role+') is waiting for approval');if(u.role==='teacher'&&sc(u.school)?.paid===false)c.push(u.name+' is locked out (unpaid school)')});S.meets.forEach(m=>{if(!S.users.some(u=>u.id===m.a)||!S.users.some(u=>u.id===m.b))c.push('A meeting refers to a deleted user')});S.schools.forEach(s=>{if(!S.users.some(u=>u.school===s.id&&u.role==='principal'&&u.ok))c.push(s.name+' has no approved principal')});return `<p class='mut'>Automatic checks for common mistakes.</p>`+(c.map(x=>`<div class='card'>${e(x)}</div>`).join('')||`<div class='card'>No problems found.</div>`)}
 function aLog(){const E=(S.errors||[]).slice(-20).reverse();return `<h2>App errors</h2>${E.map(x=>`<div class='card'><b>${e(x.m)}</b><div class='mut'>${new Date(x.t).toLocaleString()}</div></div>`).join('')||`<p class='mut'>No errors recorded.</p>`}${E.length?`<button class='g' onclick='S.errors=[];save();go()'>Clear errors</button>`:''}<h2>Alerts</h2>${S.alerts.slice(-20).reverse().map(a=>`<div class='card'><b>${e(a.type)}</b><div class='mut'>${e(a.from)} · ${e(sn(a.school))} · ${new Date(a.t).toLocaleString()}</div>${e(a.note)}</div>`).join('')||`<p class='mut'>No alerts.</p>`}`}
 function appr(id){S.users.find(u=>u.id===id).ok=true;save();go()}
 function post(){const t=$("ht").value.trim(),b=$("hb").value.trim();if(!t||!b)return;S.ann.push({school:school.id,title:t,body:b,by:me.name,t:Date.now()});save();tab="home";go()}
