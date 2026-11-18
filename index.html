@@ -76,9 +76,6 @@ button:active{transform:scale(.96);box-shadow:0 0 0 4px color-mix(in srgb,var(--
 .card{transition:transform .2s,box-shadow .2s}
 .card:active{transform:perspective(600px) rotateX(3deg) scale(.99);box-shadow:0 10px 24px -10px var(--navy)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-.trust{display:flex;flex-wrap:wrap;gap:8px}.trust .tag{background:var(--gold-soft);padding:5px 11px}
-.step{display:flex;gap:12px;align-items:center;margin:10px 0}.step b{flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:Georgia,serif}
-.cta{display:block;text-align:center;margin-top:12px;padding:12px;border-radius:8px;background:var(--navy);color:#fff;text-decoration:none;font-weight:600}
 .link{background:none;color:var(--mut);font-weight:500;text-decoration:underline;margin-top:26px}
 </style>
 </head>
@@ -142,14 +139,7 @@ function auth(){const em=($("em")?.value||"").trim().toLowerCase(),phn=($("ph")?
  if(pw.length<4){err="Use a longer password.";return go()}
  const u={id:S.n++,school:school.id,name:nm,email:meth==="phone"?"":em,phone:meth==="email"?"":phn,pw,role,ok:!ST({role})};S.users.push(u);save();
  if(u.ok){me=u;tab="home"}else{pend=u;step="pending"}go()}
-const CONTACT="";
-function landing(){const ins=!matchMedia("(display-mode: standalone)").matches;
- return `<div class="pg"><button class="w" onclick="$('schools').scrollIntoView({behavior:'smooth'})">Choose your school</button><div class="trust" style="margin-top:14px">${["School-approved staff","Private records","Instant help alerts"].map(t=>`<span class="tag">${t}</span>`).join("")}</div>
- <h2>Made for your school community</h2>${[["Parents","See your child’s record, message teachers and book meetings."],["Teachers","Reach families, share records and send school notices."],["Principals","Approve staff, manage your school and keep everyone informed."]].map(r=>`<div class="card ann"><h3>${r[0]}</h3><span class="mut">${r[1]}</span></div>`).join("")}
- <h2>What you can do</h2><div class="trust">${["Private messages","Meetings","Learner records","Announcements","Urgent help alerts"].map(t=>`<span class="tag">${t}</span>`).join("")}</div>
- <h2>How it works</h2>${["Choose your school","Sign in or create an account","Use your own dashboard"].map((t,i)=>`<div class="step"><b>${i+1}</b>${t}</div>`).join("")}
- <div class="card" style="margin-top:18px"><h3>Want EduLynx at your school?</h3><span class="mut">Speak to the EduLynx team about bringing your school on board.</span>${CONTACT?`<a class="cta" href="mailto:${CONTACT}">Contact us</a>`:""}</div>
- ${ins?'<p class="mut">Tip: in Chrome, tap the ⋮ menu and choose Add to Home screen to install EduLynx.</p>':""}</div>`}
+function landing(){return `<div class="pg" style="padding-bottom:0"><p style="font-size:17px;margin:0">Messages, meetings, records and safety alerts for parents, teachers and principals, all in one secure place.</p></div>`}
 let meth="email",otp=null;
 const ph=s=>{let d=String(s||"").replace(/\D/g,"");if(d.startsWith("27")&&d.length===11)d="0"+d.slice(2);return d};
 const fu=id=>{id=String(id||"").trim();return S.users.find(u=>u.school===school.id&&(id.includes("@")?u.email===id.toLowerCase():u.phone&&ph(id)&&ph(u.phone)===ph(id)))};
@@ -214,4 +204,3 @@ go();
 </script>
 </body>
 </html>
-
